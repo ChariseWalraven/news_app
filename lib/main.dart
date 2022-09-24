@@ -13,7 +13,7 @@ class NewsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: newsAppTheme,
-      home: const HomeScreen(),
+      home: HomeScreen(),
     );
   }
 }
