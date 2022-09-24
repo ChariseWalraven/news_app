@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/core/models/article.dart';
 import 'package:news_app/core/services/news_service.dart';
+import 'package:news_app/ui/widgets/news_article.dart';
 import 'package:news_app/ui/widgets/scaffold.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -64,32 +65,6 @@ class NewsArticles extends StatelessWidget {
       itemBuilder: (context, index) {
         return NewsArticle(article: articles[index]);
       },
-    );
-  }
-}
-
-class NewsArticle extends StatelessWidget {
-  const NewsArticle({super.key, required this.article});
-
-  final Article article;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Row(
-        children: [
-          Expanded(child: Image.network(article.urlToImage)),
-          Expanded(
-            flex: 4,
-            child: Column(
-              children: [
-                Text(article.title),
-                Text(article.author),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
