@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/core/models/article.dart';
 import 'package:news_app/core/services/news_service.dart';
+import 'package:news_app/ui/widgets/horizontal_articles.dart';
 import 'package:news_app/ui/widgets/widgets.dart';
 import 'package:news_app/ui/widgets/vertical_articles.dart';
 import 'package:news_app/ui/widgets/scaffold.dart';
@@ -79,6 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            Text(
+              "Breaking News",
+              style: textTheme.headlineSmall,
+            ),
             Expanded(
               child: FutureBuilder(
                   future: getArticles(),
@@ -88,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (snapshot.hasData) {
                       List<Article> articles = snapshot.data ?? [];
                       debugPrint(articles[4].urlToImage);
-                      child = NewsArticles(articles: articles);
+                      child = HorizontalArticles(articles: articles);
+                      // child = NewsArticles(articles: articles);
                     } else if (snapshot.hasError) {
                       // return error widget
                       child = const ErrorMessage();
@@ -99,6 +105,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                     return child;
                   }),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(),
             ),
           ],
         ),
