@@ -20,13 +20,24 @@ class Article {
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
+    String formatTitle(title) {
+      String result = title ?? "";
+      RegExp regExp = RegExp(
+        r"(-\s*[a-zA-Z0-9\s]*)|(\|\s*[a-zA-Z]*\s*\|)|([Tt]op [Ss]tories:)",
+      );
+
+      result = result.replaceAll(regExp, "");
+
+      return result;
+    }
+
     return Article(
         author: json["author"] ?? "",
         content: json["content"] ?? "",
         description: json["description"] ?? "",
         publishedAt: json["publishedAt"] ?? "",
         source: Source.fromJson(json["source"]),
-        title: json["title"] ?? "",
+        title: formatTitle(json["title"]),
         url: json["url"] ?? "",
         urlToImage: json["urlToImage"] ?? "");
   }
