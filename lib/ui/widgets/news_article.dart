@@ -81,14 +81,11 @@ class NewsArticle extends StatelessWidget {
 
     if (scrollDirection == Axis.horizontal) {
       child = SizedBox(
-        height: maxArticleHeight,
         width: maxArticleWidth,
         child: Column(
           children: [
             Expanded(
               child: Container(
-                height: maxArticleHeight,
-                width: maxArticleWidth,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(articleMargin),
                   image: DecorationImage(

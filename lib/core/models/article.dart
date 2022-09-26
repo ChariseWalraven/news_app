@@ -21,9 +21,11 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> json) {
     String formatTitle(title) {
+      // ignore: avoid_print
+      print("Formatting title: $title");
       String result = title ?? "";
       RegExp regExp = RegExp(
-        r"(-\s*[a-zA-Z0-9\s]*)|(\|\s*[a-zA-Z]*\s*\|)|([Tt]op [Ss]tories:)",
+        r"(-\s[a-zA-Z0-9\s])|(\|\s[a-zA-Z]*\s\|)|([Tt]op [Ss]tories:)",
       );
 
       result = result.replaceAll(regExp, "");
