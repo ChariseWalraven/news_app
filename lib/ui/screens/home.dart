@@ -2,13 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:news_app/core/models/article.dart';
 import 'package:news_app/core/services/news_service.dart';
 import 'package:news_app/ui/widgets/widgets.dart';
-import 'package:news_app/ui/widgets/news_articles.dart';
+import 'package:news_app/ui/widgets/vertical_articles.dart';
 import 'package:news_app/ui/widgets/scaffold.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final NewsService newsService = NewsService();
+  String searchQuery = "";
+
+  late TextEditingController _controller;
+
+  Future<List<Article>?> getArticles() {
+    if (searchQuery != "") {
+      return newsService.getArticles(searchQuery);
+    }
+    return newsService.getHeadlines();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +64,16 @@ class HomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.0),
               ),
               padding: const EdgeInsets.all(8.0),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: _controller,
+                onSubmitted: ((value) {
+                  debugPrint("Submitted. Will search for $value");
+                  setState(() {
+                    searchQuery = value;
+                  });
+                  getArticles();
+                }),
+                decoration: const InputDecoration(
                   icon: Icon(Icons.search),
                   border: InputBorder.none,
                 ),
@@ -47,7 +81,7 @@ class HomeScreen extends StatelessWidget {
             ),
             Expanded(
               child: FutureBuilder(
-                  future: newsService.getHeadlines(),
+                  future: getArticles(),
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Article>?> snapshot) {
                     Widget child = const LoadingIndicator();
@@ -58,6 +92,10 @@ class HomeScreen extends StatelessWidget {
                     } else if (snapshot.hasError) {
                       // return error widget
                       child = const ErrorMessage();
+                    } else if (snapshot.connectionState !=
+                            ConnectionState.done ||
+                        snapshot.connectionState != ConnectionState.none) {
+                      child = const LoadingIndicator();
                     }
                     return child;
                   }),

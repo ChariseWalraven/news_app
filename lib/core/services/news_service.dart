@@ -11,16 +11,28 @@ class NewsService {
   final String _newsApiKey = newsApiKey;
   final String _baseUrl = "https://newsapi.org/v2";
 
-  Future<List<Article>?> getHeadlines() async {
+  Future<List<Article>?> getHeadlines() {
     var url =
         Uri.parse("$_baseUrl/top-headlines?language=en&apiKey=$_newsApiKey");
 
+    return _getUrl(url);
+  }
+
+  Future<List<Article>?> getArticles(String searchQuery) {
+    var url = Uri.parse(
+        "$_baseUrl/everything?q=$searchQuery&language=en&apiKey=$_newsApiKey");
+
+    return _getUrl(url);
+  }
+
+  Future<List<Article>?> _getUrl(url) async {
     var response = await http.get(url);
 
     List articlesJSON = jsonDecode(response.body)["articles"];
 
     List<Article> articles =
         articlesJSON.map((json) => Article.fromJson(json)).toList();
+
     return articles;
   }
 }
