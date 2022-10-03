@@ -27,7 +27,7 @@ class NewsService {
 
   Future<Article> getTopStory() async {
     var url = Uri.parse(
-        "$_baseUrl/top-headlines?language=en&apiKey=$_newsApiKey&pageSize=1&page=5");
+        "$_baseUrl/top-headlines?language=en&apiKey=$_newsApiKey&pageSize=1");
 
     List<Article>? articles = await _getUrl(url);
 
