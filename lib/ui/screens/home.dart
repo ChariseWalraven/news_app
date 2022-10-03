@@ -20,10 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return newsService.getHeadlines();
   }
 
-  Future<Article> getTopStory() {
-    return newsService.getTopStory();
-  }
-
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -36,22 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            FutureBuilder(
-                future: getTopStory(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<Article> snapshot) {
-                  Widget child = const LoadingIndicator();
-                  if (snapshot.hasData) {
-                    child = TopStory(article: snapshot.data);
-                  } else if (snapshot.hasError) {
-                    // return error widget
-                    child = const ErrorMessage();
-                  } else if (snapshot.connectionState != ConnectionState.done ||
-                      snapshot.connectionState != ConnectionState.none) {
-                    child = const LoadingIndicator();
-                  }
-                  return child;
-                }),
+            TopStory(),
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Text(

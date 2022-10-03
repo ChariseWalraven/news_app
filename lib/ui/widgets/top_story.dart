@@ -1,25 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/core/models/article.dart';
+import 'package:news_app/core/services/news_service.dart';
 import 'package:news_app/ui/utils/utils.dart';
+import 'package:news_app/ui/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TopStory extends StatelessWidget {
-  const TopStory({super.key, required this.article});
+  TopStory({super.key});
 
-  final Article? article;
+  final NewsService newsService = NewsService();
 
-  Future<void> _launchUrl(url) async {
-    Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri)) {
-      throw 'Could not launch $uri';
-    }
+  Future<Article> getTopStory() {
+    return newsService.getTopStory();
   }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    Widget child = FutureBuilder(
+        future: getTopStory(),
+        builder: (context, AsyncSnapshot<Article> snapshot) {
+          Widget child = const LoadingIndicator();
+          if (snapshot.hasData && snapshot.data != null) {
+            child = _content(snapshot.data, textTheme);
+          } else if (snapshot.hasError) {
+            // return error widget
+            child = const ErrorMessage();
+          } else if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.connectionState != ConnectionState.none) {
+            child = const LoadingIndicator();
+          } else {
+            child = Container();
+          }
+          return child;
+        });
+
+    return child;
+  }
+
+  Widget _content(Article? article, TextTheme textTheme) {
     const double radius = 20;
-    Widget child = SizedBox(
+
+    return SizedBox(
       height: 350,
       child: Stack(
         children: [
@@ -52,7 +74,7 @@ class TopStory extends StatelessWidget {
                         vertical: 2.5, horizontal: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.black.withOpacity(0.8),
                     ),
                     child: Text(
                       "Top Story",
@@ -94,9 +116,12 @@ class TopStory extends StatelessWidget {
         ],
       ),
     );
+  }
 
-    if (article == null) child = Container();
-
-    return child;
+  Future<void> _launchUrl(url) async {
+    Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw 'Could not launch $uri';
+    }
   }
 }
