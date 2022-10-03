@@ -1,3 +1,5 @@
+import 'package:news_app/core/models/source.dart';
+
 class Article {
   final Source source;
   final String author;
@@ -20,21 +22,38 @@ class Article {
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
-    String formatTitle(title) {
-      // ignore: avoid_print
-      print("Formatting title: $title");
-      String result = title ?? "";
-      RegExp regExp = RegExp(
-        r"(-\s[a-zA-Z0-9\s])|(\|\s[a-zA-Z]*\s\|)|([Tt]op [Ss]tories:)",
-      );
-
-      result = result.replaceAll(regExp, "");
-
-      return result;
+    String getAuthorFromTitle(String title) {
+      List<String> results = title.split('- ');
+      return results[results.length - 1];
     }
 
+    String formatTitle(String? title) {
+      String result = title ?? "";
+      RegExp regExp = RegExp(
+          r"(-\s[a-zA-Z0-9\s])|(\|\s[a-zA-Z]*\s\|)|([Tt]op [Ss]tories:)");
+
+      return result.replaceAll(regExp, "");
+    }
+
+    String formatAuthor(String? author, String? title) {
+      String result = author ?? "";
+      if (result == "" && title != null) {
+        return getAuthorFromTitle(title);
+      }
+
+      RegExp regExp = RegExp(r"https?:\/\/[a-zA-Z.a-zA-Z]*\/");
+
+      if (result.startsWith("http") && title != null) {
+        return getAuthorFromTitle(title);
+      }
+
+      return result.replaceAll(regExp, "");
+    }
+
+    // print(formatAuthor(json['author']));
+
     return Article(
-        author: json["author"] ?? "",
+        author: formatAuthor(json['author'], json['title']),
         content: json["content"] ?? "",
         description: json["description"] ?? "",
         publishedAt: json["publishedAt"] ?? "",
@@ -42,22 +61,5 @@ class Article {
         title: formatTitle(json["title"]),
         url: json["url"] ?? "",
         urlToImage: json["urlToImage"] ?? "");
-  }
-}
-
-class Source {
-  String id;
-  String name;
-
-  Source({
-    required this.id,
-    required this.name,
-  });
-
-  factory Source.fromJson(Map<String, dynamic> json) {
-    return Source(
-      id: json["id"] ?? "",
-      name: json["name"] ?? "",
-    );
   }
 }

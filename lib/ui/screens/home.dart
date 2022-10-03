@@ -6,18 +6,13 @@ import 'package:news_app/ui/widgets/widgets.dart';
 import 'package:news_app/ui/widgets/scaffold.dart';
 import 'package:news_app/ui/widgets/top_story.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   final NewsService newsService = NewsService();
 
   Future<List<Article>> getArticles() {
-    return newsService.getHeadlines();
+    return newsService.getHeadlines(withoutTopStory: true);
   }
 
   @override
@@ -27,44 +22,49 @@ class _HomeScreenState extends State<HomeScreen> {
       pageIndex: 0,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TopStory(),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Text(
-                "Breaking News",
-                style: textTheme.headlineSmall,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 3,
+                child: TopStory(),
               ),
-            ),
-            // TODO: move future builder to TopStory widget
-            SizedBox(
-              height: 250,
-              child: FutureBuilder(
-                future: getArticles(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<Article>?> snapshot) {
-                  Widget child = const LoadingIndicator();
-                  if (snapshot.hasData) {
-                    List<Article> articles = snapshot.data ?? [];
-                    debugPrint(articles[4].urlToImage);
-                    child = HorizontalArticles(articles: articles);
-                    // child = NewsArticles(articles: articles);
-                  } else if (snapshot.hasError) {
-                    // return error widget
-                    child = const ErrorMessage();
-                  } else if (snapshot.connectionState != ConnectionState.done ||
-                      snapshot.connectionState != ConnectionState.none) {
-                    child = const LoadingIndicator();
-                  }
-                  return child;
-                },
+              Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 10),
+                child: Text(
+                  "Breaking News",
+                  style: textTheme.headlineSmall,
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 2,
+                child: FutureBuilder(
+                  future: getArticles(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Article>?> snapshot) {
+                    Widget child = const LoadingIndicator();
+                    if (snapshot.hasData) {
+                      List<Article> articles = snapshot.data ?? [];
+                      child = HorizontalArticles(articles: articles);
+                      // child = NewsArticles(articles: articles);
+                    } else if (snapshot.hasError) {
+                      // return error widget
+                      child = const ErrorMessage();
+                      debugPrint(snapshot.error.toString());
+                    } else if (snapshot.connectionState !=
+                            ConnectionState.done ||
+                        snapshot.connectionState != ConnectionState.none) {
+                      child = const LoadingIndicator();
+                    }
+                    return child;
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -26,6 +26,7 @@ class TopStory extends StatelessWidget {
           } else if (snapshot.hasError) {
             // return error widget
             child = const ErrorMessage();
+            debugPrint(snapshot.error.toString());
           } else if (snapshot.connectionState != ConnectionState.done ||
               snapshot.connectionState != ConnectionState.none) {
             child = const LoadingIndicator();
@@ -41,61 +42,53 @@ class TopStory extends StatelessWidget {
   Widget _content(Article? article, TextTheme textTheme) {
     const double radius = 20;
 
-    return SizedBox(
-      height: 350,
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(radius),
-                bottomRight: Radius.circular(radius),
-              ),
-              image: DecorationImage(
-                image: getArticleImage(article?.urlToImage ?? ""),
-                fit: BoxFit.cover,
-              ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(radius),
+              bottomRight: Radius.circular(radius),
+            ),
+            image: DecorationImage(
+              image: getArticleImage(article?.urlToImage ?? ""),
+              fit: BoxFit.cover,
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.black.withOpacity(0.3),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 2.5, horizontal: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.black.withOpacity(0.8),
-                    ),
-                    child: Text(
-                      "Top Story",
-                      style: textTheme.bodyLarge?.copyWith(color: Colors.white),
-                    ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.black.withOpacity(0.3),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomChip(
+                  label: Text(
+                    "Top Story",
+                    style: textTheme.bodyLarge?.copyWith(color: Colors.white),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: Text(
-                      article?.title ?? "",
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.headlineSmall
-                          ?.copyWith(color: Colors.white),
-                    ),
+                ),
+                CustomChip(
+                  label: Text(
+                    article?.title ?? "",
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        textTheme.headlineSmall?.copyWith(color: Colors.white),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _launchUrl(article?.url);
-                    },
-                    child: Row(
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _launchUrl(article?.url);
+                  },
+                  child: CustomChip(
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           "Learn more",
@@ -108,13 +101,13 @@ class TopStory extends StatelessWidget {
                         ),
                       ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

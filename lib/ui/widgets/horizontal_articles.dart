@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:news_app/core/models/article.dart';
 import 'package:news_app/ui/widgets/news_article.dart';
 

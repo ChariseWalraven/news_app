@@ -26,11 +26,13 @@ class _NewsAppBottomBarState extends State<NewsAppBottomBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      showUnselectedLabels: false,
+      showSelectedLabels: false,
       currentIndex: widget.selectedIndex,
       onTap: (int index) {
         // home screen
         if (index == 0) {
-          nagivate(context, const HomeScreen());
+          nagivate(context, HomeScreen());
         } else {
           nagivate(context, const DiscoverScreen());
         }
